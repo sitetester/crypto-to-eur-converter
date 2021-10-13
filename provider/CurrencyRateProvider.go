@@ -1,9 +1,11 @@
 package provider
 
-type EuroOutput struct {
-	Endpoint string
-	Currency string
-	Amount   float64
+type ExpectedOutput struct {
+	Endpoint     string
+	FromCurrency string
+	FromAmount   float64
+	ToCurrency   string
+	ToAmount     float64
 }
 
 type CurrencyRate struct {

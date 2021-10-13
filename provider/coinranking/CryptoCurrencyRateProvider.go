@@ -32,7 +32,7 @@ func (cryptoCurrencyRateProvider *CryptoCurrencyRateProvider) ProvideRates(refer
 	apiResponse := parseUrl(referenceCurrencyUuid, 0)
 	totalCoins := apiResponse.Data.Stats.TotalCoins
 
-	apiResponseChan := make(chan ApiResponse)
+	apiResponseChan := make(chan ApiResponse, totalCoins)
 	offset := 0
 	totalPages := 0
 	for totalPages <= apiResponse.Data.Stats.TotalCoins/50 {
@@ -53,7 +53,19 @@ channelLoop:
 		}
 	}
 
-	return currencyRates, totalCoins
+	return filterRates(), totalCoins
+}
+
+// this is much faster than applying check inside `parseRates()`
+func filterRates() []provider.CurrencyRate {
+	var filteredRates []provider.CurrencyRate
+	for _, currencyRate := range currencyRates {
+		if currencyRate.Amount != "" {
+			filteredRates = append(filteredRates, currencyRate)
+		}
+	}
+
+	return filteredRates
 }
 
 func parseUrlWithChannel(referenceCurrencyUuid string, offset int, apiResponseChan chan ApiResponse) {
@@ -62,7 +74,7 @@ func parseUrlWithChannel(referenceCurrencyUuid string, offset int, apiResponseCh
 
 func parseUrl(referenceCurrencyUuid string, offset int) ApiResponse {
 	url := fmt.Sprintf("%scoins?referenceCurrencyUuid=%s&timePeriod=24h&offset=%d&limit=50", ApiUrl, referenceCurrencyUuid, offset)
-	// fmt.Printf("Parsing URL: %s\n", url)
+	fmt.Printf("Parsing URL: %s\n", url)
 
 	body := makeRequest(url)
 	var apiResponse ApiResponse

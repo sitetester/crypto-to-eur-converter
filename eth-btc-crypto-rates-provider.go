@@ -1,12 +1,12 @@
 package main
 
 import (
+	"encoding/json"
 	"eth-btc-crypto-currencies-converter/provider"
 	"eth-btc-crypto-currencies-converter/provider/coinranking"
 	"fmt"
 	"github.com/fatih/color"
 	"log"
-	"math"
 	"os"
 	"strconv"
 	"strings"
@@ -30,7 +30,7 @@ func main() {
 
 	currency := args[1]
 	if !contains(supportedCurrencies, strings.ToUpper(currency)) {
-		fmt.Println("Unknown currency provided. Supported currencies are " + strings.Join(supportedCurrencies, ", "))
+		fmt.Println("Unknown currency. Supported currencies are " + strings.Join(supportedCurrencies, ", "))
 		return
 	}
 
@@ -44,28 +44,31 @@ func main() {
 	color.Green("Total rates found: %d\n", totalCoins)
 	color.Green("Total rates parsed: %d\n", len(currencyRates))
 
+	fmt.Printf("`FromAmount` is shown in %s\n", currency)
 	euroRateStr := cryptoCurrencyRateProvider.ParseEurRate(currencyUuidMap[currency])
-	println("euroRateStr", euroRateStr)
-	displayInEuro(currencyRates, toFloat(euroRateStr))
+
+	displayInEuro(currencyRates, toFloat(euroRateStr), currencyUuidMap[currency])
 }
 
-// https://yourbasic.org/golang/round-float-2-decimal-places/
-func displayInEuro(currencyRates []provider.CurrencyRate, euroRate float64) {
-	endpoint := coinranking.BaseUrl
-	i := 0
+func displayInEuro(currencyRates []provider.CurrencyRate, euroRate float64, referenceCurrencyUuid string) {
+	endpoint := fmt.Sprintf("%scoins?referenceCurrencyUuid=%s", coinranking.ApiUrl, referenceCurrencyUuid)
 	for _, rate := range currencyRates {
-		i += 1
-		if i > 5 {
-			break
+		amountFloat := toFloat(rate.Amount)
+		expectedOutput := provider.ExpectedOutput{
+			Endpoint:     endpoint,
+			FromCurrency: rate.Currency,
+			FromAmount:   amountFloat,
+			ToCurrency:   "EUR",
+			ToAmount:     amountFloat * euroRate,
 		}
 
-		euroOutput := provider.EuroOutput{
-			Endpoint: endpoint,
-			Currency: "EUR",
-			Amount:   math.Round(toFloat(rate.Amount)*euroRate*100) / 100, // round to nearest
+		b, err := json.Marshal(expectedOutput)
+		if err != nil {
+			fmt.Println(err)
+			return
 		}
 
-		fmt.Printf("%s, %+v\n", rate.Currency, euroOutput)
+		fmt.Println(string(b))
 	}
 }
 
