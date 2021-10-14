@@ -16,8 +16,8 @@ func main() {
 	currencyUuidMap["ETH"] = "razxDUgYGNAdQ"
 
 	supportedCurrencies := make([]string, 0, len(currencyUuidMap))
-	for k := range currencyUuidMap {
-		supportedCurrencies = append(supportedCurrencies, k)
+	for key := range currencyUuidMap {
+		supportedCurrencies = append(supportedCurrencies, key)
 	}
 
 	args := os.Args
