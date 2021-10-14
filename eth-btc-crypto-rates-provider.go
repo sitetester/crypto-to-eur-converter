@@ -42,7 +42,7 @@ func main() {
 
 	color.Green("Done!")
 	color.Green("Total rates found: %d\n", totalCoins)
-	color.Green("Total rates parsed: %d\n", len(currencyRates))
+	color.Green("Total rates parsed (excluding `0` amount currencies): %d\n", len(currencyRates))
 
 	fmt.Printf("`FromAmount` is shown in %s\n", currency)
 	euroRateStr := cryptoCurrencyRateProvider.ParseEurRate(currencyUuidMap[currency])
