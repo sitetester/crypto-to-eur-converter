@@ -62,13 +62,13 @@ func displayInEuro(currencyRates []provider.CurrencyRate, euroRate float64, refe
 			ToAmount:     amountFloat * euroRate,
 		}
 
-		b, err := json.Marshal(expectedOutput)
+		bytes, err := json.Marshal(expectedOutput)
 		if err != nil {
 			fmt.Println(err)
 			return
 		}
 
-		fmt.Println(string(b))
+		fmt.Println(string(bytes))
 	}
 }
 
