@@ -15,8 +15,7 @@ type CurrencyRate struct {
 
 type CryptoCurrencyRateProvider struct{}
 
-const BaseUrl = "https://coinranking.com/"
-const ApiUrl = BaseUrl + "api/v2/"
+const ApiUrl = "https://coinranking.com/api/v2/"
 
 var currencyRates []CurrencyRate
 
