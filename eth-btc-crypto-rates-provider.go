@@ -2,12 +2,11 @@ package main
 
 import (
 	"encoding/json"
+	"eth-btc-crypto-currencies-converter/helper"
 	"eth-btc-crypto-currencies-converter/provider/coinranking"
 	"fmt"
 	"github.com/fatih/color"
-	"log"
 	"os"
-	"strconv"
 	"strings"
 )
 
@@ -28,7 +27,7 @@ func main() {
 	}
 
 	currency := args[1]
-	if !contains(supportedCurrencies, strings.ToUpper(currency)) {
+	if !helper.Contains(supportedCurrencies, strings.ToUpper(currency)) {
 		fmt.Println("Unknown currency. Supported currencies are " + strings.Join(supportedCurrencies, ", "))
 		return
 	}
@@ -46,14 +45,14 @@ func main() {
 	fmt.Printf("`FromAmount` is shown in %s\n", currency)
 	euroRateStr := cryptoCurrencyRateProvider.ParseEurRate(currencyUuidMap[currency])
 
-	displayInEuro(currencyRates, toFloat(euroRateStr), currencyUuidMap[currency])
+	displayInEuro(currencyRates, helper.ToFloat(euroRateStr), currencyUuidMap[currency])
 }
 
 func displayInEuro(currencyRates []coinranking.CurrencyRate, euroRate float64, referenceCurrencyUuid string) {
 	endpoint := fmt.Sprintf("%scoins?referenceCurrencyUuid=%s", coinranking.ApiUrl, referenceCurrencyUuid)
 
 	for _, rate := range currencyRates {
-		amountFloat := toFloat(rate.Amount)
+		amountFloat := helper.ToFloat(rate.Amount)
 
 		expectedOutput := ExpectedOutput{
 			Endpoint:     endpoint,
@@ -71,29 +70,6 @@ func displayInEuro(currencyRates []coinranking.CurrencyRate, euroRate float64, r
 
 		fmt.Println(string(bytes))
 	}
-}
-
-func toFloat(strRate string) float64 {
-	if strRate == "" {
-		return 0
-	}
-
-	euroRate, err := strconv.ParseFloat(strRate, 64)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	return euroRate
-}
-
-func contains(s []string, str string) bool {
-	for _, v := range s {
-		if v == str {
-			return true
-		}
-	}
-
-	return false
 }
 
 type ExpectedOutput struct {
