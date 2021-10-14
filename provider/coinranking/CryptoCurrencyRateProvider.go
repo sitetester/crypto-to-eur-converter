@@ -114,13 +114,13 @@ type EurApiResponse struct {
 	Data   EurData
 }
 
+type EurData struct {
+	Coin Coin
+}
+
 type ApiResponse struct {
 	Status string
 	Data   Data
-}
-
-type EurData struct {
-	Coin Coin
 }
 
 type Data struct {
