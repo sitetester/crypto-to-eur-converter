@@ -51,8 +51,10 @@ func main() {
 
 func displayInEuro(currencyRates []coinranking.CurrencyRate, euroRate float64, referenceCurrencyUuid string) {
 	endpoint := fmt.Sprintf("%scoins?referenceCurrencyUuid=%s", coinranking.ApiUrl, referenceCurrencyUuid)
+
 	for _, rate := range currencyRates {
 		amountFloat := toFloat(rate.Amount)
+
 		expectedOutput := ExpectedOutput{
 			Endpoint:     endpoint,
 			FromCurrency: rate.Currency,
