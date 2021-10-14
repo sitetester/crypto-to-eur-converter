@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"eth-btc-crypto-currencies-converter/provider"
 	"eth-btc-crypto-currencies-converter/provider/coinranking"
 	"fmt"
 	"github.com/fatih/color"
@@ -35,10 +34,10 @@ func main() {
 	}
 
 	var cryptoCurrencyRateProvider coinranking.CryptoCurrencyRateProvider
-	var currencyRates []provider.CurrencyRate
+	var currencyRates []coinranking.CurrencyRate
 	var totalCoins int
 
-	currencyRates, totalCoins = cryptoCurrencyRateProvider.ProvideRates(currencyUuidMap[currency])
+	currencyRates, totalCoins = cryptoCurrencyRateProvider.ProvideRatesForCurrency(currencyUuidMap[currency])
 
 	color.Green("Done!")
 	color.Green("Total rates found: %d\n", totalCoins)
@@ -50,11 +49,11 @@ func main() {
 	displayInEuro(currencyRates, toFloat(euroRateStr), currencyUuidMap[currency])
 }
 
-func displayInEuro(currencyRates []provider.CurrencyRate, euroRate float64, referenceCurrencyUuid string) {
+func displayInEuro(currencyRates []coinranking.CurrencyRate, euroRate float64, referenceCurrencyUuid string) {
 	endpoint := fmt.Sprintf("%scoins?referenceCurrencyUuid=%s", coinranking.ApiUrl, referenceCurrencyUuid)
 	for _, rate := range currencyRates {
 		amountFloat := toFloat(rate.Amount)
-		expectedOutput := provider.ExpectedOutput{
+		expectedOutput := ExpectedOutput{
 			Endpoint:     endpoint,
 			FromCurrency: rate.Currency,
 			FromAmount:   amountFloat,
@@ -93,4 +92,12 @@ func contains(s []string, str string) bool {
 	}
 
 	return false
+}
+
+type ExpectedOutput struct {
+	Endpoint     string
+	FromCurrency string
+	FromAmount   float64
+	ToCurrency   string
+	ToAmount     float64
 }

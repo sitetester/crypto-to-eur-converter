@@ -2,19 +2,23 @@ package coinranking
 
 import (
 	"encoding/json"
-	"eth-btc-crypto-currencies-converter/provider"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
 )
 
+type CurrencyRate struct {
+	Currency string
+	Amount   string
+}
+
 type CryptoCurrencyRateProvider struct{}
 
 const BaseUrl = "https://coinranking.com/"
 const ApiUrl = BaseUrl + "api/v2/"
 
-var currencyRates []provider.CurrencyRate
+var currencyRates []CurrencyRate
 
 func (cryptoCurrencyRateProvider *CryptoCurrencyRateProvider) ParseEurRate(currency string) string {
 	toEuroUrl := fmt.Sprintf("%s/coin/%s?referenceCurrencyUuid=%s", ApiUrl, currency, "5k-_VTxqtCEI")
@@ -28,7 +32,7 @@ func (cryptoCurrencyRateProvider *CryptoCurrencyRateProvider) ParseEurRate(curre
 	return apiResponse.Data.Coin.Price
 }
 
-func (cryptoCurrencyRateProvider *CryptoCurrencyRateProvider) ProvideRates(referenceCurrencyUuid string) ([]provider.CurrencyRate, int) {
+func (cryptoCurrencyRateProvider *CryptoCurrencyRateProvider) ProvideRatesForCurrency(referenceCurrencyUuid string) ([]CurrencyRate, int) {
 	apiResponse := parseUrl(referenceCurrencyUuid, 0)
 	totalCoins := apiResponse.Data.Stats.TotalCoins
 
@@ -57,8 +61,8 @@ channelLoop:
 }
 
 // this is much faster than applying check inside `parseRates()`
-func filterRates() []provider.CurrencyRate {
-	var filteredRates []provider.CurrencyRate
+func filterRates() []CurrencyRate {
+	var filteredRates []CurrencyRate
 	for _, currencyRate := range currencyRates {
 		if currencyRate.Amount != "" {
 			filteredRates = append(filteredRates, currencyRate)
@@ -98,7 +102,7 @@ func makeRequest(url string) []byte {
 
 func parseRates(coins []Coin) {
 	for _, coin := range coins {
-		currencyRates = append(currencyRates, provider.CurrencyRate{
+		currencyRates = append(currencyRates, CurrencyRate{
 			Currency: coin.Symbol,
 			Amount:   coin.Price,
 		})
