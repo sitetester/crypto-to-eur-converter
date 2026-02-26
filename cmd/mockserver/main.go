@@ -41,5 +41,7 @@ func main() {
 		fmt.Printf("  http://localhost:%s%s\n", port, path)
 	}
 
-	log.Fatal(http.ListenAndServe(":"+port, nil))
+	if err := http.ListenAndServe(":"+port, nil); err != nil {
+		log.Fatalf("Server failed: %v", err)
+	}
 }
