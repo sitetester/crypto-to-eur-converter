@@ -82,7 +82,7 @@ func TestEndpointRandomFieldsOrder(t *testing.T) {
 			name: "currency first",
 			data: map[string]interface{}{
 				"some_random_name": "ABC",
-				"cur_rice":         "123.45",
+				"cur_price":        "123.45",
 			},
 		},
 		{
