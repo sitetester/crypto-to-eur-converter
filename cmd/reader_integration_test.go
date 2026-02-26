@@ -73,7 +73,7 @@ func TestEndpointSol(t *testing.T) {
 	)
 }
 
-func TestEndpointRandomFieldOrder(t *testing.T) {
+func TestEndpointRandomFieldsOrder(t *testing.T) {
 	tests := []struct {
 		name string
 		data map[string]interface{}
@@ -82,13 +82,13 @@ func TestEndpointRandomFieldOrder(t *testing.T) {
 			name: "currency first",
 			data: map[string]interface{}{
 				"some_random_name": "ABC",
-				"price":            "123.45",
+				"cur_rice":         "123.45",
 			},
 		},
 		{
 			name: "currency second",
 			data: map[string]interface{}{
-				"price":            "123.45",
+				"currency_amount":  "123.45",
 				"some_random_name": "ABC",
 			},
 		},
