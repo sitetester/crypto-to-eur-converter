@@ -25,6 +25,7 @@ func NewEndpointReader(client *http.Client, endpoint string) *EndpointReader {
 
 // Read fetches data from provided endpoint & returns a unified endpoint data
 // It handles different JSON formats, e.g., endpoint-btc with string amount, endpoint-eth with float price
+// Currency & amounts related various fields are returned in common format
 func (r *EndpointReader) Read() (provider.EndpointData, error) {
 	endpointData := provider.EndpointData{}
 
