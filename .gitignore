@@ -1,0 +1,5 @@
+.idea
+input
+config/dev.json
+config/prod.json
+.DS_Store
