@@ -9,7 +9,10 @@ import (
 
 func jsonResponse(w http.ResponseWriter, json string) {
 	w.Header().Set("Content-Type", "application/json")
-	w.Write([]byte(json))
+	_, err := w.Write([]byte(json))
+	if err != nil {
+		return
+	}
 }
 
 func jsonHandler(json string) http.HandlerFunc {
